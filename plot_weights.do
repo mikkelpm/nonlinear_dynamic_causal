@@ -33,8 +33,9 @@ foreach f in q m {; // For quarterly and monthly shocks...;
 		};
 	
 		* Compute weight function via regression;
-		qui: levelsof `v';
-		local levels "`r(levels)'"; // Values of shock in sample;
+		levelsof `v', local(levels); // Values of shock in sample;
+		su `v';
+		local levels "`levels' `=1.01*`r(max)''"; // Add value slightly larger than max, so weights drop to 0
 		
 		tempfile fil;
 		postfile handle x b se using `fil', replace;
