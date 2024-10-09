@@ -13,7 +13,7 @@ MPM 2024-10-08
 
 * Settings;
 
-local plot_q "bpshock newsy mfev top3xsret rrtaxu_dm exogenrratio aftr15 ford_tfp jf_tfp jpt_tfp"; // Quarterly shocks to plot;
+local plot_q "*"; // Quarterly shocks to plot;
 local plot_m "*"; // Monthly shocks to plot;
 local cv = 1.96; // Critical value for SE band;
 
@@ -69,6 +69,7 @@ foreach f in q m {; // For quarterly and monthly shocks...;
 			text(`maxy' `minx' "Weight>0 = `weight_pos' (`weight_pos_se')", box bcolor(black) fcolor(white) margin(vsmall) placement(se))
 			xtitle("") legend(off) graphregion(color(white));
 		graph export fig/`v'.png, replace;
+		graph export fig/`v'.eps, replace;
 		restore;
 	
 	};

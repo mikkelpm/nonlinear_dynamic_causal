@@ -22,6 +22,11 @@ foreach v of varlist newsy mfev top3xsret bpshock {;
 	predict `v'_res, resid;
 };
 keep qdate *_res;
+rename *_res *;
+rename newsy gov_ramey;
+rename mfev gov_benzeevpappa;
+rename top3xsret gov_fisherpeters;
+rename bpshock gov_blanchardperotti;
 cd ../..;
 save shock_q, replace;
 
@@ -38,6 +43,10 @@ foreach v of varlist exogenrratio rrtaxu_dm rrtaxu {;
 	predict `v'_res, resid;
 };
 keep qdate *_res;
+rename *_res *;
+rename exogenrratio tax_romer;
+rename rrtaxu tax_mertensravn;
+rename rrtaxu_dm tax_mertensravn_dm;
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -52,6 +61,7 @@ local v aftr15;
 reg `v' L(1/`p').`v' L(1/`p').taxy L(1/`p').ly t t2; // Follows line 100 in "jordataxnews.do" when the outcome variable is "ly"
 predict `v'_res, resid;
 keep qdate *_res;
+rename aftr15_res taxnews_lrw;
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -64,11 +74,16 @@ do jordatech_edit;
 
 local p = 2;
 
-foreach v of varlist ford_tfp jf_tfp jpt_tfp jpt_mei bzk_ist_news bp_tfp_news_sr {;
+foreach v of varlist ford_tfp jf_tfp jpt_tfp jpt_mei {;
 	reg `v' L(1/`p').`v' L(1/`p').lrgdp L(1/`p').lrstockp L(1/`p').lxtot t t2; // Follows line 185 in "jordatech.do" when the outcome variable is "lrgdp"
 	predict `v'_res, resid;
 };
 keep qdate *_res;
+rename *_res *;
+rename ford_tfp tfp_ford;
+rename jf_tfp tfp_fernald;
+rename jpt_tfp tfp_jpt;
+rename jpt_mei ist_jpt;
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -85,6 +100,7 @@ local shock ffr;
 reg `shock' L(1/`p').`shock' L(0/`p').lip L(0/`p').unemp L(0/`p').lcpi L(0/`p').lpcom L(1/`p').lnbr L(1/`p').ltr L(1/`p').lm1 if mdate>=m(1965m1) & mdate<=m(1995m6); // Follows lines 53-58 in "var_cee.do"
 predict `shock'_res, resid;
 keep mdate *_res;
+rename ffr_res mon_cee;
 cd ../..;
 save shock_m, replace;
 
@@ -100,6 +116,7 @@ local shock cumrrshockorig;
 reg `shock' L(1/`p').`shock' L(0/`p').lip L(0/`p').unemp L(0/`p').lcpi L(0/`p').lpcom if mdate>=m(1969m1) & mdate<=m(1996m12);  // Follows lines 62-67 in "var_romer.do"
 predict `shock'_res, resid;
 keep mdate *_res;
+rename `shock'_res mon_romer;
 cd ../..;
 merge 1:1 mdate using shock_m, nogen;
 save shock_m, replace;
@@ -116,6 +133,7 @@ local shock ff4_tc;
 reg `shock' L(1/`p').`shock' L(1/`p').lip L(1/`p').gs1 L(1/`p').lcpi L(1/`p').ebp if mdate>=m(1990m1) & mdate<=m(2012m6); // Follows line 77 in "jorda_gk.do"
 predict `shock'_res, resid;
 keep mdate *_res;
+rename `shock'_res mon_gertlerkaradi;
 cd ../..;
 merge 1:1 mdate using shock_m, nogen;
 save shock_m, replace;
@@ -126,7 +144,6 @@ save shock_m, replace;
 foreach f in q m {;
 	use shock_`f', clear;
 	tsset `f'date;
-	rename *_res *;
 	compress;
 	save shock_`f', replace;
 };
