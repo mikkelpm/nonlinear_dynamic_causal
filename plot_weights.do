@@ -31,11 +31,14 @@ foreach f in q m {; // For quarterly and monthly shocks...;
 		if "`v'" == "`f'date" {;
 			continue;
 		};
+		
+		su `v';
+		replace `v' = `v'/`r(sd)'; // Change units to standard deviations;
 	
 		* Compute weight function via regression;
 		levelsof `v', local(levels); // Values of shock in sample;
 		su `v';
-		local levels "`levels' `=1.01*`r(max)''"; // Add value slightly larger than max, so weights drop to 0
+		local levels "`levels' `=`r(max)'+.01'"; // Add value slightly larger than max, so weights drop to 0;
 		
 		tempfile fil;
 		postfile handle x b se using `fil', replace;
