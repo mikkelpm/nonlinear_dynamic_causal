@@ -61,7 +61,7 @@ foreach f in q m {; // For quarterly and monthly shocks...;
 		preserve;
 		use `fil', clear;
 		gen upper = b+`cv'*se;
-		gen lower = b-`cv'*se;
+		gen lower = max(b-`cv'*se,0);
 		
 		su upper;
 		local maxy = `r(max)'; // Determine placement of textbox in plot;
