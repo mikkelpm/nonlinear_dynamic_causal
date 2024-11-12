@@ -5,7 +5,7 @@ set more off;
 /*
 SAVE IDENTIFIED SHOCKS FROM RAMEY (2016) HANDBOOK CHAPTER
 
-MPM 2024-10-08
+MPM 2024-11-11
 */;
 
 
@@ -24,13 +24,13 @@ foreach v of varlist newsy mfev top3xsret bpshock {;
 keep qdate *_res;
 rename *_res *;
 rename newsy gov_ramey;
-label var gov_ramey "Ramey (2011) military spending shock, following Ramey (2016) handbook chapter";
+label var gov_ramey "Ramey";
 rename mfev gov_benzeevpappa;
-label var gov_benzeevpappa "Ben Zeev & Pappa (2017) defense spending shock, following Ramey (2016) handbook chapter";
+label var gov_benzeevpappa "Ben Zeev & Pappa";
 rename top3xsret gov_fisherpeters;
-label var gov_fisherpeters "Fisher & Peters (2010) government spending shock, following Ramey (2016) handbook chapter";
+label var gov_fisherpeters "Fisher & Peters";
 rename bpshock gov_blanchardperotti;
-label var gov_blanchardperotti "Blanchard & Perotti (2002) government spending shock, following Ramey (2016) handbook chapter";
+label var gov_blanchardperotti "Blanchard & Perotti";
 cd ../..;
 save shock_q, replace;
 
@@ -49,11 +49,9 @@ foreach v of varlist exogenrratio rrtaxu_dm rrtaxu {;
 keep qdate *_res;
 rename *_res *;
 rename exogenrratio tax_romer;
-label var tax_romer "Romer & Romer (2010) tax shock, following Ramey (2016) handbook chapter";
-rename rrtaxu tax_mertensravn;
-label var tax_mertensravn "Mertens & Ravn (2011) tax shock, following Ramey (2016) handbook chapter";
+label var tax_romer "Romer & Romer";
 rename rrtaxu_dm tax_mertensravn_dm;
-label var tax_mertensravn_dm "Mertens & Ravn (2011) tax shock with original de-meaning, following Ramey (2016) handbook chapter";
+label var tax_mertensravn_dm "Mertens & Ravn";
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -68,8 +66,8 @@ local v aftr15;
 reg `v' L(1/`p').`v' L(1/`p').taxy L(1/`p').ly t t2; // Follows line 100 in "jordataxnews.do" when the outcome variable is "ly"
 predict `v'_res, resid;
 keep qdate *_res;
-rename aftr15_res taxnews_lrw;
-label var taxnews_lrw "Leeper, Richter & Walker (2012) tax news shock, following Ramey (2016) handbook chapter";
+rename aftr15_res tax_lrw;
+label var tax_lrw "Leeper et al.";
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -89,13 +87,13 @@ foreach v of varlist ford_tfp jf_tfp jpt_tfp jpt_mei {;
 keep qdate *_res;
 rename *_res *;
 rename ford_tfp tfp_ford;
-label var tfp_ford "Francis, Owyang, Roush & DiCecio (2014) TFP shock, following Ramey (2016) handbook chapter";
+label var tfp_ford "Francis et al.";
 rename jf_tfp tfp_fernald;
-label var tfp_fernald "Fernald (2014) utilization-adjusted TFP shock, following Ramey (2016) handbook chapter";
+label var tfp_fernald "Fernald";
 rename jpt_tfp tfp_jpt;
-label var tfp_jpt "Justiniano, Primiceri & Tambalotti (2011) TFP shock, following Ramey (2016) handbook chapter";
-rename jpt_mei ist_jpt;
-label var ist_jpt "Justiniano, Primiceri & Tambalotti (2011) IST shock, following Ramey (2016) handbook chapter";
+label var tfp_jpt "Justiniano et al. TFP";
+rename jpt_mei tfp_jpt_ist;
+label var tfp_jpt_ist "Justiniano et al. IST";
 cd ../..;
 merge 1:1 qdate using shock_q, nogen;
 save shock_q, replace;
@@ -113,7 +111,7 @@ reg `shock' L(1/`p').`shock' L(0/`p').lip L(0/`p').unemp L(0/`p').lcpi L(0/`p').
 predict `shock'_res, resid;
 keep mdate *_res;
 rename ffr_res mon_cee;
-label var mon_cee "Christiano, Eichenbaum & Evans (1999) monetary shock, following Ramey (2016) handbook chapter";
+label var mon_cee "Christiano et al.";
 cd ../..;
 save shock_m, replace;
 
@@ -130,7 +128,7 @@ reg `shock' L(1/`p').`shock' L(0/`p').lip L(0/`p').unemp L(0/`p').lcpi L(0/`p').
 predict `shock'_res, resid;
 keep mdate *_res;
 rename `shock'_res mon_romer;
-label var mon_romer "Romer & Romer (2004) monetary shock, following Ramey (2016) handbook chapter";
+label var mon_romer "Romer & Romer";
 cd ../..;
 merge 1:1 mdate using shock_m, nogen;
 save shock_m, replace;
@@ -148,7 +146,7 @@ reg `shock' L(1/`p').`shock' L(1/`p').lip L(1/`p').gs1 L(1/`p').lcpi L(1/`p').eb
 predict `shock'_res, resid;
 keep mdate *_res;
 rename `shock'_res mon_gertlerkaradi;
-label var mon_gertlerkaradi "Gertler & Karadi (2015) monetary shock, following Ramey (2016) handbook chapter";
+label var mon_gertlerkaradi "Gertler & Karadi";
 cd ../..;
 merge 1:1 mdate using shock_m, nogen;
 save shock_m, replace;

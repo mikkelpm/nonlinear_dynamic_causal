@@ -4,8 +4,9 @@ Replication code and data for "Dynamic Causal Effects in a Nonlinear World: the 
 
 ## Replication instructions
 1. Execute [save_shocks.do](save_shocks.do) in Stata
-2. Execute [plot_weights.do](plot_weights.do) in Stata
-3. The generated figures will be stored in a folder called "fig"
+2. Execute [compute_weights.do](compute_weights.do) in Stata
+3. Execute [plot_weights.do](plot_weights.do) in Stata
+4. The generated figures will be stored in a folder called "fig"
 
 Tested in Stata SE 17.0 on a Windows 11 PC
 

@@ -5,77 +5,26 @@ set more off;
 /*
 PLOT IMPLIED SHOCK WEIGHT FUNCTION
 
-Please run "save_shocks.do" before this file
+Please run "compute_weights.do" before this file
 
-MPM 2024-10-08
+MPM 2024-11-11
 */;
 
 
-* Settings;
+* Plot weight functions grouped by type of shock;
 
-local plot_q "*"; // Quarterly shocks to plot;
-local plot_m "*"; // Monthly shocks to plot;
-local cv = 1.96; // Critical value for SE band;
+use weights;
 
-
-* Compute and plot weights;
-
-cap mkdir fig;
-
-foreach f in q m {; // For quarterly and monthly shocks...;
-
-	use shock_`f', clear;
-	
-	foreach v of varlist `plot_`f'' {;
-	
-		if "`v'" == "`f'date" {;
-			continue;
-		};
-		
-		su `v';
-		replace `v' = `v'/`r(sd)'; // Change units to standard deviations;
-	
-		* Compute weight function via regression;
-		levelsof `v', local(levels); // Values of shock in sample;
-		su `v';
-		local levels "`levels' `=`r(max)'+.01'"; // Add value slightly larger than max, so weights drop to 0;
-		
-		tempfile fil;
-		postfile handle x b se using `fil', replace;
-		foreach l of local levels {; // For each x value...;
-			gen ind = (`v'>=`l'); // Indicator;
-			reg ind `v', robust; // Regression to compute weight;
-			post handle (`l') (_b[`v']) (_se[`v']); // Store coefficient and SE;
-			drop ind;
-		};
-		postclose handle;
-		
-		* Compute total weight on positive shocks;
-		gen max0 = max(`v',0) if !missing(`v');
-		reg max0 `v', robust;
-		local weight_pos : display %4.3f _b[`v'];
-		local weight_pos_se : display %4.3f _se[`v'];
-		drop max0;
-		
-		* Plot weights with SE band;
-		preserve;
-		use `fil', clear;
-		gen upper = b+`cv'*se;
-		gen lower = max(b-`cv'*se,0);
-		
-		su upper;
-		local maxy = `r(max)'; // Determine placement of textbox in plot;
-		su x;
-		local minx = `r(min)';
-		
-		line b upper lower x, connect(stairstep ..) lcolor(black ..) lwidth(thick vthin vthin)
-			xline(0, lcolor(black) lwidth(vthin) lpattern(shortdash))
-			text(`maxy' `minx' "Weight>0 = `weight_pos' (`weight_pos_se')", box bcolor(black) fcolor(white) margin(vsmall) placement(se))
-			xtitle("") legend(off) graphregion(color(white));
-		graph export fig/`v'.png, replace;
-		graph export fig/`v'.eps, replace;
-		restore;
-	
-	};
-
+foreach gr in gov tax tfp mon {;
+	preserve;
+	egen nonmiss = rownonmiss(`gr'*_b);
+	drop if nonmiss == 0;
+	line `gr'*_b x, connect(stairstep ..) lwidth(thick ..)
+				lcolor(ebblue black cranberry gs6) lpattern(solid shortdash dash longdash)
+				xline(0, lcolor(black) lwidth(vthin) lpattern(shortdash))
+				legend(symxsize(*0.5) position(6) ring(1) cols(2))
+				xtitle("") graphregion(color(white)) xsize(8) ysize(5);
+			graph export fig/`gr'.png, replace;
+			graph export fig/`gr'.eps, replace;
+	restore;
 };
