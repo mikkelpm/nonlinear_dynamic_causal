@@ -1,6 +1,6 @@
 # Causal weights for macroeconomic shocks
 
-Replication code and data for "Dynamic Causal Effects in a Nonlinear World: the Good, the Bad, and the Ugly" by [Michal Kolesár](https://github.com/kolesarm) and [Mikkel Plagborg-Møller](https://github.com/mikkelpm)
+Replication code and data for "Dynamic Causal Effects in a Nonlinear World: the Good, the Bad, and the Ugly" ([arXiv:2411.10415](https://arxiv.org/abs/2411.10415), 2024) by [Michal Kolesár](https://github.com/kolesarm) and [Mikkel Plagborg-Møller](https://github.com/mikkelpm)
 
 ## Replication instructions
 1. Execute [save_shocks.do](save_shocks.do) in Stata
@@ -9,6 +9,10 @@ Replication code and data for "Dynamic Causal Effects in a Nonlinear World: the 
 4. The generated figures will be stored in a folder called "fig"
 
 Tested in Stata SE 17.0 on a Windows 11 PC
+
+## User guide
+
+New applications can use the code in [compute_weights.do](compute_weights.do) off the shelf. The only modification needed is to change the file names of the Stata `.dta` files containing the shock series of interest.
 
 ## Acknowledgements
 
